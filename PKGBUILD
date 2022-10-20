@@ -1,7 +1,7 @@
 # Maintainer: Erika <50500602+Enbika@users.noreply.github.com>
 
 pkgname=sonic3air-git
-pkgver=22.07.31.2.test.r0.g7b4d3aee
+pkgver=22.09.10.0.stable.r25.gead270c3
 pkgrel=1
 pkgdesc='A fan-made widescreen remaster of Sonic 3 & Knuckles.'
 arch=('x86_64')
@@ -34,20 +34,20 @@ pkgver() {
 }
 
 prepare() {
-	cp -r "$srcdir/${pkgname%-git}/Oxygen/soncthrickles/build/_cmake" "$srcdir/${pkgname%-git}/Oxygen/soncthrickles/source/"
-	cp -r "$srcdir/Sonic_Knuckles_wSonic3.bin" "$srcdir/${pkgname%-git}/Oxygen/soncthrickles/___internal/"
+	cp -r "$srcdir/${pkgname%-git}/Oxygen/sonic3air/build/_cmake" "$srcdir/${pkgname%-git}/Oxygen/sonic3air/source/"
+	cp -r "$srcdir/Sonic_Knuckles_wSonic3.bin" "$srcdir/${pkgname%-git}/Oxygen/sonic3air/___internal/"
 	# patch CMakeLists for mastering build
-	sed -i 's;target_compile_definitions(Sonic3AIR PUBLIC ENDUSER);target_compile_definitions(Sonic3AIR PUBLIC);' "$srcdir/${pkgname%-git}/Oxygen/soncthrickles/source/_cmake/CMakeLists.txt"
+	sed -i 's;target_compile_definitions(Sonic3AIR PUBLIC ENDUSER);target_compile_definitions(Sonic3AIR PUBLIC);' "$srcdir/${pkgname%-git}/Oxygen/sonic3air/source/_cmake/CMakeLists.txt"
 }
 
 build() {
 	echo "Building master build..."
-	cd "$srcdir/${pkgname%-git}/Oxygen/soncthrickles/source/_cmake"
+	cd "$srcdir/${pkgname%-git}/Oxygen/sonic3air/source/_cmake"
 	cmake -DCMAKE_BUILD_TYPE=Release -B build
 	cmake --build build -j $(nproc)
 
 	# run sonic3air_linux for mastering
-	cd "$srcdir/${pkgname%-git}/Oxygen/soncthrickles"
+	cd "$srcdir/${pkgname%-git}/Oxygen/sonic3air"
 	echo "Running script nativization..."
 	xvfb-run -s "-screen 0 1920x1080x24 -nolisten local" \
 	./sonic3air_linux -dumpcppdefinitions -nativize
@@ -56,7 +56,7 @@ build() {
 	./sonic3air_linux -pack
 
 	# undo previous patch and rebuild with enduser flag set
-	cd "$srcdir/${pkgname%-git}/Oxygen/soncthrickles/source/_cmake"
+	cd "$srcdir/${pkgname%-git}/Oxygen/sonic3air/source/_cmake"
 	sed -i 's;target_compile_definitions(Sonic3AIR PUBLIC);target_compile_definitions(Sonic3AIR PUBLIC ENDUSER);' "CMakeLists.txt"
 	echo "Building enduser build..."
 	cmake -DCMAKE_BUILD_TYPE=Release -B build
@@ -69,7 +69,7 @@ package() {
 	install -Dm755 sonic3air.sh "$pkgdir/usr/bin/sonic3air"
 	
 	# Build data packages and meta data
-	cd "$srcdir/${pkgname%-git}/Oxygen/soncthrickles"
+	cd "$srcdir/${pkgname%-git}/Oxygen/sonic3air"
 	install -Dm644 enginedata.bin "$pkgdir/opt/sonic3air/data/enginedata.bin"
 	install -Dm644 gamedata.bin "$pkgdir/opt/sonic3air/data/gamedata.bin"
 	install -Dm644 audiodata.bin "$pkgdir/opt/sonic3air/data/audiodata.bin"
@@ -78,10 +78,10 @@ package() {
 	install -Dm644 data/metadata.json "$pkgdir/opt/sonic3air/data/data/metadata.json"
 
 	# Build the master installation
-	cd "$srcdir/${pkgname%-git}/Oxygen/soncthrickles/_master_image_template"
+	cd "$srcdir/${pkgname%-git}/Oxygen/sonic3air/_master_image_template"
 	find . -type f -exec install -D {} "$pkgdir/opt/sonic3air/{}" \;
 
-	cd "$srcdir/${pkgname%-git}/Oxygen/soncthrickles/"
+	cd "$srcdir/${pkgname%-git}/Oxygen/sonic3air/"
 	install -Dm644 data/images/icon.png "$pkgdir/opt/sonic3air/data/icon.png"
 	install -Dm755 sonic3air_linux "$pkgdir/opt/sonic3air"
 	install -Dm644 source/external/discord_game_sdk/lib/x86_64/libdiscord_game_sdk.so "$pkgdir/opt/sonic3air"
@@ -96,6 +96,6 @@ package() {
 	install -Dm755 "$srcdir/${pkgname%-git}/Oxygen/oxygenengine/oxygenapp_linux" "$pkgdir/opt/sonic3air/bonus/oxygenengine/oxygenapp_linux"
 
 	# Complete S3AIR dev
-	cd "$srcdir/${pkgname%-git}/Oxygen/soncthrickles/scripts/"
+	cd "$srcdir/${pkgname%-git}/Oxygen/sonic3air/scripts/"
 	find . -type f -exec install -D {} "$pkgdir/opt/sonic3air/bonus/sonic3air_dev/scripts/{}" \;
 }
