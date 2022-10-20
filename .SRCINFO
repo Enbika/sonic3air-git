@@ -1,6 +1,6 @@
 pkgbase = sonic3air-git
 	pkgdesc = A fan-made widescreen remaster of Sonic 3 & Knuckles.
-	pkgver = 22.07.31.2.test.r0.g7b4d3aee
+	pkgver = 22.09.10.0.stable.r25.gead270c3
 	pkgrel = 1
 	url = https://sonic3air.org/
 	arch = x86_64
